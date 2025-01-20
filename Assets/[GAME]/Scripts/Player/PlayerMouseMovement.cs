@@ -8,18 +8,33 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private Vector2 direction; // Hareket yönü
 
+    private void OnEnable()
+    {
+        ActionManager.OnPlayerRevive += ResetMovementDirection;
+    }
+
+    private void OnDisable()
+    {
+        ActionManager.OnPlayerRevive -= ResetMovementDirection;
+    }
+
     private void Start()
     {
         // Başlangıç yönü 45 derece yukarı
-        direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
+        ResetMovementDirection();
     }
 
     private void Update()
     {
-        // Hareketi uygula
-        transform.Translate(direction * speed * Time.deltaTime);
+        ApplyMovement();
 
         ChangeDirectionInput();
+    }
+
+    private void ApplyMovement()
+    {
+        // Hareketi uygula
+        transform.Translate(direction * speed * Time.deltaTime);
     }
 
     private void ChangeDirection()
@@ -35,5 +50,10 @@ public class PlayerMouseMovement : MonoBehaviour
         {
             ChangeDirection();
         }
+    }
+
+    private void ResetMovementDirection()
+    {
+        direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
     }
 }

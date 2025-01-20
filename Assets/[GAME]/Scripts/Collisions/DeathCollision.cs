@@ -6,7 +6,6 @@ public class DeathCollision : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Died!");
             ActionManager.OnPlayerDeath?.Invoke();
         }
     }
