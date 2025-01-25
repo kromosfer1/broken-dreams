@@ -41,6 +41,7 @@ public class PlayerMouseMovement : MonoBehaviour
     {
         // Yönü tersine çevir (y eksenini değiştir)
         direction = new Vector2(direction.x, -direction.y);
+        UpdateSpriteDirection();
     }
 
     private void ChangeDirectionInput()
@@ -55,5 +56,11 @@ public class PlayerMouseMovement : MonoBehaviour
     private void ResetMovementDirection()
     {
         direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
+    }
+
+    void UpdateSpriteDirection()
+    {
+        // Yukarı gidiyorsa ölçek pozitif, aşağı gidiyorsa ölçek negatif
+        transform.localScale = new Vector3(1, direction.y < 0 ? -1 : 1, 1);
     }
 }
