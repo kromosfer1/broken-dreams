@@ -30,6 +30,7 @@ public class PlayerHealthController : MonoBehaviour
     private void Revive()
     {
         gameObject.transform.position = _respawnPoint;
+        gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
         ActionManager.OnPlayerRevive?.Invoke();
     }
 }

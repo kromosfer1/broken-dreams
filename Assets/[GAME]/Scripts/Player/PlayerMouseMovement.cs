@@ -6,16 +6,20 @@ public class PlayerMouseMovement : MonoBehaviour
     [SerializeField] private float speed = 5f; // Karakterin hareket hızı
     [SerializeField] private float angle = 45f; // Hareket açısı (derece)
 
+    private bool _canMove = true;
+
     private Vector2 direction; // Hareket yönü
 
     private void OnEnable()
     {
         ActionManager.OnPlayerRevive += ResetMovementDirection;
+        ActionManager.OnPlayerDeath += DisableMovement;
     }
 
     private void OnDisable()
     {
         ActionManager.OnPlayerRevive -= ResetMovementDirection;
+        ActionManager.OnPlayerDeath -= DisableMovement;
     }
 
     private void Start()
@@ -33,8 +37,11 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
+        if (_canMove)
+        {
+            transform.Translate(direction * speed * Time.deltaTime);
+        }
         // Hareketi uygula
-        transform.Translate(direction * speed * Time.deltaTime);
     }
 
     private void ChangeDirection()
@@ -47,7 +54,7 @@ public class PlayerMouseMovement : MonoBehaviour
     private void ChangeDirectionInput()
     {
         // Fare tıklaması ile yön değiştir
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && _canMove==true)
         {
             ChangeDirection();
         }
@@ -55,7 +62,13 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void ResetMovementDirection()
     {
+        _canMove = true;
         direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
+    }
+
+    private void DisableMovement()
+    {
+        _canMove = false;
     }
 
     void UpdateSpriteDirection()
@@ -63,4 +76,5 @@ public class PlayerMouseMovement : MonoBehaviour
         // Yukarı gidiyorsa ölçek pozitif, aşağı gidiyorsa ölçek negatif
         transform.localScale = new Vector3(1, direction.y < 0 ? -1 : 1, 1);
     }
+
 }
