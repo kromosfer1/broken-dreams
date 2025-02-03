@@ -1,10 +1,13 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class PlayerMouseMovement : MonoBehaviour
 {
     [SerializeField] private float speed = 5f; // Karakterin hareket hızı
     [SerializeField] private float angle = 45f; // Hareket açısı (derece)
+
+    [SerializeField] private float _deathAnimWait = 0.5f;
 
     private bool _canMove = true;
 
@@ -39,9 +42,8 @@ public class PlayerMouseMovement : MonoBehaviour
     {
         if (_canMove)
         {
-            transform.Translate(direction * speed * Time.deltaTime);
+            transform.Translate(direction * speed * Time.deltaTime); // Hareketi uygula
         }
-        // Hareketi uygula
     }
 
     private void ChangeDirection()
@@ -68,13 +70,19 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void DisableMovement()
     {
-        _canMove = false;
+        StartCoroutine(DeathDragAction());
     }
 
-    void UpdateSpriteDirection()
+    private void UpdateSpriteDirection()
     {
         // Yukarı gidiyorsa ölçek pozitif, aşağı gidiyorsa ölçek negatif
         transform.localScale = new Vector3(1, direction.y < 0 ? -1 : 1, 1);
+    }
+
+    IEnumerator DeathDragAction()
+    {
+        yield return new WaitForSeconds(_deathAnimWait);
+        _canMove = false;
     }
 
 }
