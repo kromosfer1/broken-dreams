@@ -4,6 +4,8 @@ using System.Collections;
 
 public class PlayerMouseMovement : MonoBehaviour
 {
+    [SerializeField] private CapsuleCollider2D _playerCollider;
+
     [SerializeField] private float speed = 5f; // Karakterin hareket hızı
     [SerializeField] private float angle = 45f; // Hareket açısı (derece)
 
@@ -17,12 +19,14 @@ public class PlayerMouseMovement : MonoBehaviour
     {
         ActionManager.OnPlayerRevive += ResetMovementDirection;
         ActionManager.OnPlayerDeath += DisableMovement;
+        ActionManager.OnLevelFinish += DisableMovement;
     }
 
     private void OnDisable()
     {
         ActionManager.OnPlayerRevive -= ResetMovementDirection;
         ActionManager.OnPlayerDeath -= DisableMovement;
+        ActionManager.OnLevelFinish -= DisableMovement;
     }
 
     private void Start()
@@ -65,12 +69,14 @@ public class PlayerMouseMovement : MonoBehaviour
     private void ResetMovementDirection()
     {
         _canMove = true;
+        _playerCollider.enabled = true;
         direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
     }
 
     private void DisableMovement()
     {
         StartCoroutine(DeathDragAction());
+        _playerCollider.enabled = false;
     }
 
     private void UpdateSpriteDirection()
