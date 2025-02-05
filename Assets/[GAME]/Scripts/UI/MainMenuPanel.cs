@@ -4,24 +4,18 @@ using UnityEngine;
 
 namespace AnilHarmandali.UnityRuntimeUI
 {
-    public class SettingsPanel : PanelBase
+    public class MainMenuPanel : PanelBase
     {
-        protected override string ID => "SettingsPanel";
+        protected override string ID => "MainMenu";
 
         public override void ShowPanel()
         {
             base.ShowPanel();
-            ActionManager.GamePauseRequested?.Invoke();
         }
+
         public override void HidePanel()
         {
             base.HidePanel();
-            ActionManager.GameResumeRequested?.Invoke();
-        }
-
-        public void QuitGame()
-        {
-            Application.Quit();
         }
     }
 }

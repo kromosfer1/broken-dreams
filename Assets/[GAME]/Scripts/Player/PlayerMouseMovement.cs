@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class PlayerMouseMovement : MonoBehaviour
 {
@@ -18,15 +19,19 @@ public class PlayerMouseMovement : MonoBehaviour
     private void OnEnable()
     {
         ActionManager.OnPlayerRevive += ResetMovementDirection;
-        ActionManager.OnPlayerDeath += DisableMovement;
-        ActionManager.OnLevelFinish += DisableMovement;
+        ActionManager.OnPlayerDeath += DeathAction;
+        ActionManager.OnLevelFinish += DeathAction;
+        ActionManager.GamePauseRequested += DisableMovement;
+        ActionManager.GameResumeRequested += EnableMovement;
     }
 
     private void OnDisable()
     {
         ActionManager.OnPlayerRevive -= ResetMovementDirection;
-        ActionManager.OnPlayerDeath -= DisableMovement;
-        ActionManager.OnLevelFinish -= DisableMovement;
+        ActionManager.OnPlayerDeath -= DeathAction;
+        ActionManager.OnLevelFinish -= DeathAction;
+        ActionManager.GamePauseRequested -= DisableMovement;
+        ActionManager.GameResumeRequested -= EnableMovement;
     }
 
     private void Start()
@@ -37,17 +42,17 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void Update()
     {
-        ApplyMovement();
+        if (_canMove)
+        {
+            ApplyMovement();
 
-        ChangeDirectionInput();
+            ChangeDirectionInput();
+        }       
     }
 
     private void ApplyMovement()
     {
-        if (_canMove)
-        {
-            transform.Translate(direction * speed * Time.deltaTime); // Hareketi uygula
-        }
+        transform.Translate(direction * speed * Time.deltaTime); // Hareketi uygula
     }
 
     private void ChangeDirection()
@@ -60,7 +65,7 @@ public class PlayerMouseMovement : MonoBehaviour
     private void ChangeDirectionInput()
     {
         // Fare tıklaması ile yön değiştir
-        if (Input.GetMouseButtonDown(0) && _canMove==true)
+        if (_canMove == true && Input.GetMouseButtonDown(0) && !IsPointerOverUI())
         {
             ChangeDirection();
         }
@@ -73,10 +78,20 @@ public class PlayerMouseMovement : MonoBehaviour
         direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
     }
 
-    private void DisableMovement()
+    private void DeathAction()
     {
         StartCoroutine(DeathDragAction());
         _playerCollider.enabled = false;
+    }
+
+    private void DisableMovement()
+    {
+        _canMove = false;
+    }
+
+    private void EnableMovement()
+    {
+        _canMove = true;
     }
 
     private void UpdateSpriteDirection()
@@ -85,10 +100,15 @@ public class PlayerMouseMovement : MonoBehaviour
         transform.localScale = new Vector3(1, direction.y < 0 ? -1 : 1, 1);
     }
 
+    private bool IsPointerOverUI()
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    }
+
     IEnumerator DeathDragAction()
     {
         yield return new WaitForSeconds(_deathAnimWait);
-        _canMove = false;
+        DisableMovement();
     }
 
 }
