@@ -9,7 +9,7 @@ namespace AnilHarmandali.UnityRuntimeUI
     {
         protected override string ID => "NextLevelPanel";
 
-        //[SerializeField] private int _currentLevelIndex;
+        [SerializeField] private int _currentLevelIndex;
 
         public override void ShowPanel()
         {
@@ -18,6 +18,8 @@ namespace AnilHarmandali.UnityRuntimeUI
         public override void HidePanel()
         {
             base.HidePanel();
+            ActionManager.NextLevelRequested?.Invoke();
+            SceneManager.LoadScene(_currentLevelIndex + 1);
         }
         //public void RestartLevel()
         //{

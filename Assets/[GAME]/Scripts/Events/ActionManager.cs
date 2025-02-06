@@ -9,4 +9,6 @@ public static class ActionManager
     public static Action OnLevelFinish;
     public static Action GamePauseRequested;
     public static Action GameResumeRequested;
+    public static Action OnGameStart;
+    public static Action NextLevelRequested;
 }

@@ -12,7 +12,8 @@ public class PlayerMouseMovement : MonoBehaviour
 
     [SerializeField] private float _deathAnimWait = 0.5f;
 
-    private bool _canMove = true;
+    private bool canMove = true;
+    private bool gameStarted = false;
 
     private Vector2 direction; // Hareket yönü
 
@@ -23,6 +24,7 @@ public class PlayerMouseMovement : MonoBehaviour
         ActionManager.OnLevelFinish += DeathAction;
         ActionManager.GamePauseRequested += DisableMovement;
         ActionManager.GameResumeRequested += EnableMovement;
+        ActionManager.OnGameStart += GameStartedAction;
     }
 
     private void OnDisable()
@@ -32,22 +34,23 @@ public class PlayerMouseMovement : MonoBehaviour
         ActionManager.OnLevelFinish -= DeathAction;
         ActionManager.GamePauseRequested -= DisableMovement;
         ActionManager.GameResumeRequested -= EnableMovement;
-    }
-
-    private void Start()
-    {
-        // Başlangıç yönü 45 derece yukarı
-        ResetMovementDirection();
+        ActionManager.OnGameStart -= GameStartedAction;
     }
 
     private void Update()
     {
-        if (_canMove)
+        if (canMove && gameStarted)
         {
             ApplyMovement();
 
             ChangeDirectionInput();
         }       
+    }
+
+    private void GameStartedAction()
+    {
+        gameStarted = true;
+        ResetMovementDirection();
     }
 
     private void ApplyMovement()
@@ -65,7 +68,7 @@ public class PlayerMouseMovement : MonoBehaviour
     private void ChangeDirectionInput()
     {
         // Fare tıklaması ile yön değiştir
-        if (_canMove == true && Input.GetMouseButtonDown(0) && !IsPointerOverUI())
+        if (canMove == true && Input.GetMouseButtonDown(0) && !IsPointerOverUI())
         {
             ChangeDirection();
         }
@@ -73,7 +76,7 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void ResetMovementDirection()
     {
-        _canMove = true;
+        canMove = true;
         _playerCollider.enabled = true;
         direction = new Vector2(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle));
     }
@@ -86,12 +89,12 @@ public class PlayerMouseMovement : MonoBehaviour
 
     private void DisableMovement()
     {
-        _canMove = false;
+        canMove = false;
     }
 
     private void EnableMovement()
     {
-        _canMove = true;
+        canMove = true;
     }
 
     private void UpdateSpriteDirection()

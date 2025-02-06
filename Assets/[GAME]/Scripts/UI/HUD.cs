@@ -4,19 +4,17 @@ using UnityEngine;
 
 namespace AnilHarmandali.UnityRuntimeUI
 {
-    public class MainMenuPanel : PanelBase
+    public class HUD : PanelBase
     {
-        protected override string ID => "MainMenu";
+        protected override string ID => "HUD";
 
         public override void ShowPanel()
         {
             base.ShowPanel();
         }
-
         public override void HidePanel()
         {
             base.HidePanel();
-            ActionManager.OnGameStart?.Invoke();
         }
     }
 }
